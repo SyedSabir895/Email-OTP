@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
@@ -6,9 +6,14 @@ import "./App.css";
 function Login() {
   const [step, setStep] = useState("form");
   const [email, setEmail] = useState("");
-  //const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/welcome", { replace: true });
+    }
+  }, [navigate]);
 
   const sendOtp = async (e) => {
     e.preventDefault();
@@ -26,7 +31,8 @@ function Login() {
     try {
       const res = await axios.post("http://localhost:5000/api/otp/verify", { email, otp });
       if (res.data.success) {
-        navigate("/welcome"); 
+        localStorage.setItem("isLoggedIn", "true");
+        navigate("/welcome", { replace: true });
       } else {
         alert("Invalid OTP");
       }
@@ -41,7 +47,6 @@ function Login() {
       {step === "form" ? (
         <form onSubmit={sendOtp}>
           <input type="email" placeholder="Email" required onChange={(e) => setEmail(e.target.value)} />
-          {/*<input type="password" placeholder="Password" required onChange={(e) => setPassword(e.target.value)} /> */}
           <button type="submit">Send OTP</button>
         </form>
       ) : (

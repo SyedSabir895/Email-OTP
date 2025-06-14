@@ -7,7 +7,7 @@ exports.sendOtp = async (req, res) => {
   if (!email) return res.status(400).json({ message: "Email is required" });
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.set(email, otp); // Store OTP
+  otpStore.set(email, otp); 
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
